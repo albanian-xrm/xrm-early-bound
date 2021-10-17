@@ -7,6 +7,15 @@ declare namespace Models {
         Name: Xrm.Attributes.StringAttribute;
         NumberOfEmployees: Xrm.Attributes.NumberAttribute;
     }
+
+    namespace Account.Forms {
+        interface Account extends Xrm.EarlyBound.Form<"Account"> {
+            name: "Name";
+            header_ModifiedBy: "ModifiedBy";
+            ModifiedBy: "ModifiedBy";
+            modifiedon: "ModifiedOn";
+        }
+    }
 }
 
 declare namespace Xrm.EarlyBound {

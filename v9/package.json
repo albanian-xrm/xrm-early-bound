@@ -1,6 +1,6 @@
 {
   "name": "@albanian-xrm/early-bound",
-  "version": "9.0.0",
+  "version": "9.0.2",
   "description": "Early Bound Type Augmentation for @types/xrm",
   "repository": "https://github.com/albanian-xrm/xrm-early-bound.git",
   "author": "AlbanianXrm <albanian@xrm.al> (https://xrm.al)",

@@ -27,11 +27,18 @@ declare namespace Xrm {
          */
         interface Entities {}
 
+        /**
+         * List of known Early-Bound Forms. Use Type Augmentation to declare your forms.
+         */
+        interface Forms {}
+
+        interface Form<T extends keyof Entities> {}
+
         namespace Events {
             /**
              * @template T Early-Bound entity for the {@link Xrm.Events.EventContext}
              */
-            interface EventContext<T extends Entities[keyof Entities]> extends Xrm.Events.EventContext {
+            interface EventContext<T extends Form<keyof Entities>> extends Xrm.Events.EventContext {
                 getFormContext(): FormContext<T>;
             }
         }
@@ -39,7 +46,7 @@ declare namespace Xrm {
         /**
          * @template T Early-Bound entity for the context
          */
-        interface FormContext<T extends Entities[keyof Entities]> extends Xrm.FormContext {
+        interface FormContext<T extends Form<keyof Entities>> extends Xrm.FormContext {
             getAttribute(): Attributes.Attribute[];
 
             /**
@@ -48,7 +55,7 @@ declare namespace Xrm {
              * @param attributeName Name of the attribute {@link Y}.
              * @returns The attribute.
              */
-            getAttribute<Y extends keyof LowercaseKeys<T>>(attributeName: Y): LowercaseKeys<T>[Y];
+            getAttribute<Y extends keyof FormAttributes<T>>(attributeName: Y): FormAttributes<T>[Y];
 
             getAttribute<T extends Attributes.Attribute>(attributeName: string): T;
             getAttribute(attributeName: string): Attributes.Attribute;
@@ -63,7 +70,7 @@ declare namespace Xrm {
              * @param controlName Name of the control {@link Y}.
              * @returns The control.
              */
-            getControl<Y extends keyof LowercaseKeys<T>>(controlName: Y): Control<LowercaseKeys<T>, Y>;
+            getControl<Y extends keyof FormControls<T>>(controlName: Y): FormControls<T>[Y];
 
             getControl(controlName: string): Controls.Control;
             getControl<T extends Controls.Control>(index: number): T;
@@ -71,19 +78,19 @@ declare namespace Xrm {
             getControl(delegateFunction: Collection.MatchingDelegate<Controls.Control>): Controls.Control[];
         }
 
-        type Control<T, Y extends keyof T> = T[Y] extends Attributes.StringAttribute
+        type ToControl<T> = T extends Attributes.StringAttribute
             ? Controls.StringControl
-            : T[Y] extends Attributes.BooleanAttribute
+            : T extends Attributes.BooleanAttribute
             ? Controls.OptionSetControl
-            : T[Y] extends Attributes.OptionSetAttribute
+            : T extends Attributes.OptionSetAttribute
             ? Controls.OptionSetControl
-            : T[Y] extends Attributes.EnumAttribute<number | boolean>
+            : T extends Attributes.EnumAttribute<number | boolean>
             ? Controls.OptionSetControl
-            : T[Y] extends Attributes.NumberAttribute
+            : T extends Attributes.NumberAttribute
             ? Controls.NumberControl
-            : T[Y] extends Attributes.LookupAttribute
+            : T extends Attributes.LookupAttribute
             ? Controls.LookupControl
-            : T[Y] extends Attributes.DateAttribute
+            : T extends Attributes.DateAttribute
             ? Controls.DateControl
             : Controls.Control;
 
@@ -116,7 +123,7 @@ declare namespace Xrm {
                 Pick<T, AllowedNames<T, Attributes.OptionSetAttribute | Attributes.NumberAttribute>>
             >]?: number;
         } & {
-            [P in keyof LowercaseKeys<Pick<T, AllowedNames<T, Attributes.BooleanAttribute>>>]?: boolean;
+            [P in keyof LowercaseKeys<OfType<T, Attributes.BooleanAttribute>>]?: boolean;
         } & {
             [P in keyof LowercaseKeys<Pick<T, AllowedNames<T, Attributes.NumberAttribute>>>]?: number;
         } & {
@@ -132,5 +139,30 @@ declare namespace Xrm {
         };
 
         type AllowedNames<Base, Condition> = FilterFlags<Base, Condition>[keyof Base];
+
+        type OfType<Base, Condition> = Pick<Base, AllowedNames<Base, Condition>>;
+
+        type GetFormType<T extends Form<keyof Entities>> = T extends Form<infer TResult> ? TResult : keyof Entities;
+
+        type SpecificFormAttributes<T extends Form<keyof Entities>> = {
+            [P in keyof OfType<T, string> as `${OfType<T, string>[P] &
+                string}`]: T[P] extends keyof Entities[GetFormType<T>] ? Entities[GetFormType<T>][T[P]] : unknown;
+        };
+
+        type SpecificFormControls<T extends Form<keyof Entities>> = {
+            [P in keyof OfType<T, string> as `${P & string}`]: T[P] extends keyof Entities[GetFormType<T>]
+                ? ToControl<Entities[GetFormType<T>][T[P]]>
+                : unknown;
+        };
+
+        type FormAttributes<T extends Form<keyof Entities>> = LowercaseKeys<
+            keyof T extends never
+                ? { [P in keyof Entities[GetFormType<T>]]: Entities[GetFormType<T>][P] }
+                : SpecificFormAttributes<T>
+        >;
+
+        type FormControls<T extends Form<keyof Entities>> = keyof T extends never
+            ? { [P in keyof Entities[GetFormType<T>] as Lowercase<P & string>]: ToControl<Entities[GetFormType<T>][P]> }
+            : SpecificFormControls<T>;
     }
 }
