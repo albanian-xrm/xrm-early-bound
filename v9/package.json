@@ -1,6 +1,6 @@
 {
   "name": "@albanian-xrm/early-bound",
-  "version": "9.0.2",
+  "version": "9.0.3",
   "description": "Early Bound Type Augmentation for @types/xrm",
   "repository": "https://github.com/albanian-xrm/xrm-early-bound.git",
   "author": "AlbanianXrm <albanian@xrm.al> (https://xrm.al)",
@@ -14,6 +14,7 @@
   "files": [
     "index.d.ts"
   ],
+  "keywords": ["xrm", "early-bound", "dataverse"],
   "peerDependencies": {
     "@types/xrm": "^9"
   },

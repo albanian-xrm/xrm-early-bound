@@ -1,8 +1,8 @@
 const tests = {
     "should infer types for Specific Form Models.Account.Forms.Account": (
-        context: Xrm.EarlyBound.Events.EventContext<Models.Account.Forms.Account>,
+        context: Xrm.Events.BoundEventContext<Models.Account.Forms.Account>,
     ) => {
-        // $ExpectType FormContext<Account>
+        // $ExpectType BoundFormContext<Account>
         const form = context.getFormContext();
         // $ExpectType DateControl
         const modifiedon = form.getControl("modifiedon");
@@ -16,14 +16,21 @@ const tests = {
         const modifiedByAttribute = form.getAttribute("modifiedby");
         // $ExpectType LookupValue[] | null
         modifiedByAttribute.getValue();
-
         // $ExpectType LookupControl
         const modifiedby = form.getControl("header_ModifiedBy");
+        // $ExpectType IframeControl
+        const myWebResource = form.getControl("myWebResource");
+
+        // $ExpectType StringControl
+        form.ui.controls.get("name");
+
+        // $ExpectType SectionCollection<Account, "SUMMARY_TAB">
+        const SUMMARY_TAB = form.ui.tabs.get("SUMMARY_TAB");
     },
     "should infer types for Specific Generic Models.Account Form": (
-        context: Xrm.EarlyBound.Events.EventContext<Xrm.EarlyBound.Form<"Account">>,
+        context: Xrm.Events.BoundEventContext<Xrm.EarlyBound.Form<"Account">>,
     ) => {
-        // $ExpectType FormContext<Form<"Account">>
+        // $ExpectType BoundFormContext<Form<"Account">>
         const form = context.getFormContext();
         // $ExpectType DateControl
         const modifiedon = form.getControl("modifiedon");
@@ -67,5 +74,11 @@ const tests = {
     ) => {
         // $ExpectType "Account"
         testFormType(mainForm);
+    },
+    "should infer tab controls": (
+        tabControls: Xrm.EarlyBound.Types.SectionControls<Models.Account.Forms.Account, "SUMMARY_TAB", "ACCOUNT_INFORMATION">,
+    ) => {
+        // $ExpectType StringControl
+        tabControls.name;
     },
 };
