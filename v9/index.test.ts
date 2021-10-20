@@ -24,8 +24,12 @@ const tests = {
         // $ExpectType StringControl
         form.ui.controls.get("name");
 
-        // $ExpectType SectionCollection<Account, "SUMMARY_TAB">
+        // $ExpectType BoundTab<Account, "SUMMARY_TAB">
         const SUMMARY_TAB = form.ui.tabs.get("SUMMARY_TAB");
+        // $ExpectType BoundSection<Account, "SUMMARY_TAB", "ACCOUNT_INFORMATION">
+        const ACCOUNT_INFORMATION = SUMMARY_TAB.sections.get("ACCOUNT_INFORMATION");
+        // $ExpectType StringControl
+        ACCOUNT_INFORMATION.controls.get("name");
     },
     "should infer types for Specific Generic Models.Account Form": (
         context: Xrm.Events.BoundEventContext<Xrm.EarlyBound.Form<"Account">>,
@@ -76,9 +80,19 @@ const tests = {
         testFormType(mainForm);
     },
     "should infer tab controls": (
-        tabControls: Xrm.EarlyBound.Types.SectionControls<Models.Account.Forms.Account, "SUMMARY_TAB", "ACCOUNT_INFORMATION">,
+        tabControls: Xrm.EarlyBound.Types.SectionControls<
+            Models.Account.Forms.Account,
+            "SUMMARY_TAB",
+            "ACCOUNT_INFORMATION"
+        >,
     ) => {
         // $ExpectType StringControl
         tabControls.name;
+    },
+    "should bind context.data": (context: Xrm.Events.BoundEventContext<Models.Account.Forms.Account>) => {
+        // $ExpectType BoundFormContext<Account>
+        const form = context.getFormContext();
+        // $ExpectType StringAttribute
+        form.data.attributes.get("name");
     },
 };

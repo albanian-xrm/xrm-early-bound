@@ -2,10 +2,15 @@
 // Minimum TypeScript Version: 4.2
 
 declare namespace Xrm {
+    type BoundData<T extends EarlyBound.Form<keyof EarlyBound.Entities>> = {
+        attributes: Collection.FormAttributesCollection<T>
+    } & Data;
+
     /**
      * @template T Early-Bound entity for the context
      */
     type BoundPage<T extends EarlyBound.Form<keyof EarlyBound.Entities>> = {
+        data: BoundData<T>;
         ui: BoundUi<T>;
 
         /**
@@ -35,6 +40,14 @@ declare namespace Xrm {
     } & Ui;
 
     namespace Collection {
+        type FormAttributesCollection<T extends EarlyBound.Form<keyof EarlyBound.Entities>> = {
+            /**
+           *
+           * @param itemName attribute Name
+           */
+             get<Y extends keyof EarlyBound.Types.FormAttributes<T>>(itemName: Y): EarlyBound.Types.FormAttributes<T>[Y];
+      } &  ItemCollection<Page.Attribute>;
+
         type FormControlsCollection<T extends EarlyBound.Form<keyof EarlyBound.Entities>> = {
             /**
              *
@@ -48,7 +61,7 @@ declare namespace Xrm {
              *
              * @param itemName tab Name
              */
-            get<Tab extends keyof EarlyBound.Types.TabsOf<T>>(itemName: Tab): SectionCollection<T, Tab>;
+            get<Tab extends keyof EarlyBound.Types.TabsOf<T>>(itemName: Tab): Page.BoundTab<T, Tab>;
         } & ItemCollection<Page.Tab>;
 
         type SectionCollection<
@@ -61,7 +74,7 @@ declare namespace Xrm {
              */
             get<Section extends keyof EarlyBound.Types.TabsOf<T>[Tab]>(
                 itemName: Section,
-            ): SectionControlsCollection<T, Tab, Section>;
+            ): Page.BoundSection<T, Tab, Section>;
         } & ItemCollection<Page.Section>;
 
         type SectionControlsCollection<
@@ -86,6 +99,21 @@ declare namespace Xrm {
         type BoundEventContext<T extends EarlyBound.Form<keyof EarlyBound.Entities>> = {
             getFormContext(): BoundPage<T>;
         } & EventContext;
+
+        type BoundTab<
+            T extends EarlyBound.Form<keyof EarlyBound.Entities>,
+            Tab extends keyof EarlyBound.Types.TabsOf<T>,
+        > = {
+            sections: Collection.SectionCollection<T, Tab>;
+        } & Tab;
+
+        type BoundSection<
+            T extends EarlyBound.Form<keyof EarlyBound.Entities>,
+            Tab extends keyof EarlyBound.Types.TabsOf<T>,
+            Section extends keyof EarlyBound.Types.TabsOf<T>[Tab],
+        > = {
+            controls: Collection.SectionControlsCollection<T, Tab, Section>;
+        } & Section;
     }
 
     namespace EarlyBound {
@@ -137,10 +165,7 @@ declare namespace Xrm {
                     T,
                     Types.AllowedNames<
                         T,
-                        | Page.OptionSetAttribute
-                        | Page.BooleanAttribute
-                        | Page.DateAttribute
-                        | Page.NumberAttribute
+                        Page.OptionSetAttribute | Page.BooleanAttribute | Page.DateAttribute | Page.NumberAttribute
                     >
                 >
             > as `${P & string}@OData.Community.Display.V1.FormattedValue`]?: string;
@@ -199,8 +224,7 @@ declare namespace Xrm {
                           ? ToControl<Entities[GetFormType<T>][T[P & keyof T]]>
                           : never;
                   } & {
-                      [P in keyof OfType<T, Page.Control> as `${P & string}`]: T[P &
-                          keyof T] extends Page.Control
+                      [P in keyof OfType<T, Page.Control> as `${P & string}`]: T[P & keyof T] extends Page.Control
                           ? T[P & keyof T]
                           : never;
                   };

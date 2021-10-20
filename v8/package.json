@@ -1,6 +1,6 @@
 {
   "name": "@albanian-xrm/early-bound",
-  "version": "8.0.3",
+  "version": "8.0.4",
   "description": "Early Bound Type Augmentation for @types/xrm",
   "repository": "https://github.com/albanian-xrm/xrm-early-bound.git",
   "author": "AlbanianXrm <albanian@xrm.al> (https://xrm.al)",
@@ -14,7 +14,11 @@
   "files": [
     "index.d.ts"
   ],
-  "keywords": ["xrm", "early-bound", "dataverse"],
+  "keywords": [
+    "xrm",
+    "early-bound",
+    "dataverse"
+  ],
   "peerDependencies": {
     "@types/xrm": "^8"
   },

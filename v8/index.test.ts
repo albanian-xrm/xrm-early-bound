@@ -19,6 +19,13 @@ const tests = {
 
         // $ExpectType LookupControl
         const modifiedby = form.getControl("header_ModifiedBy");
+
+        // $ExpectType BoundTab<Account, "SUMMARY_TAB">
+        const SUMMARY_TAB = form.ui.tabs.get("SUMMARY_TAB");
+        // $ExpectType BoundSection<Account, "SUMMARY_TAB", "ACCOUNT_INFORMATION">
+        const ACCOUNT_INFORMATION = SUMMARY_TAB.sections.get("ACCOUNT_INFORMATION");
+        // $ExpectType StringControl
+        ACCOUNT_INFORMATION.controls.get("name");
     },
     "should infer types for Specific Generic Models.Account Form": (
         context: Xrm.Page.BoundEventContext<Xrm.EarlyBound.Form<"Account">>,
@@ -67,5 +74,11 @@ const tests = {
     ) => {
         // $ExpectType "Account"
         testFormType(mainForm);
+    },
+      "should bind context.data": (context: Xrm.Page.BoundEventContext<Models.Account.Forms.Account>) => {
+        // $ExpectType BoundPage<Account>
+        const form = context.getFormContext();
+        // $ExpectType StringAttribute
+        form.data.attributes.get("name");
     },
 };
