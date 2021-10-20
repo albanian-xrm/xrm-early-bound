@@ -3,7 +3,7 @@
 
 declare namespace Xrm {
     type BoundData<T extends EarlyBound.Form<keyof EarlyBound.Entities>> = {
-        attributes: Collection.FormAttributesCollection<T>
+        attributes: Collection.FormAttributesCollection<T>;
     } & Data;
 
     /**
@@ -41,12 +41,12 @@ declare namespace Xrm {
 
     namespace Collection {
         type FormAttributesCollection<T extends EarlyBound.Form<keyof EarlyBound.Entities>> = {
-              /**
+            /**
              *
              * @param itemName attribute Name
              */
-               get<Y extends keyof EarlyBound.Types.FormAttributes<T>>(itemName: Y): EarlyBound.Types.FormAttributes<T>[Y];
-        } &  ItemCollection<Attributes.Attribute>;
+            get<Y extends keyof EarlyBound.Types.FormAttributes<T>>(itemName: Y): EarlyBound.Types.FormAttributes<T>[Y];
+        } & ItemCollection<Attributes.Attribute>;
 
         type FormControlsCollection<T extends EarlyBound.Form<keyof EarlyBound.Entities>> = {
             /**
@@ -210,10 +210,8 @@ declare namespace Xrm {
                 keyof T extends never
                     ? { [P in keyof Entities[GetFormType<T>]]: Entities[GetFormType<T>][P] }
                     : {
-                          [P in keyof OfType<T, string> as `${P & string}`]: T[P &
-                              keyof T] extends keyof Entities[GetFormType<T>]
-                              ? Entities[GetFormType<T>][T[P & keyof T]]
-                              : unknown;
+                          [P in keyof OfType<T, string> as `${OfType<T, string>[P] &
+                              string}`]: OfType<T, string>[P] extends keyof Entities[GetFormType<T>] ? Entities[GetFormType<T>][OfType<T, string>[P]] : never;
                       }
             >;
 
