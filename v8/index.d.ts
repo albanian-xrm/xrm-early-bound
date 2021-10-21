@@ -4,6 +4,7 @@
 declare namespace Xrm {
     type BoundData<T extends EarlyBound.Form<EarlyBound.Entity>> = {
         attributes: Collection.FormAttributesCollection<T>;
+        entity: Page.BoundEntity<T>
     } & Data;
 
     type BoundUi<T extends EarlyBound.Form<EarlyBound.Entity>> = {
@@ -244,6 +245,10 @@ declare namespace Xrm {
     } & Page;
 
     namespace Page {
+        type BoundEntity<T extends EarlyBound.Form<EarlyBound.Entity>> = {
+            attributes: Collection.FormAttributesCollection<T>;
+        } & Entity;
+    
         /**
          * @template T Early-Bound entity for the {@link Xrm.Events.EventContext}
          */

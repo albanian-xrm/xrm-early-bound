@@ -4,7 +4,12 @@
 declare namespace Xrm {
     type BoundData<T extends EarlyBound.Form<EarlyBound.Entity>> = {
         attributes: Collection.FormAttributesCollection<T>;
+        entity: BoundEntity<T>
     } & Data;
+
+    type BoundEntity<T extends EarlyBound.Form<EarlyBound.Entity>> = {
+        attributes: Collection.FormAttributesCollection<T>;
+    } & Entity;
 
     /**
      * @template T Early-Bound entity for the context

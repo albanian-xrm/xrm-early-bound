@@ -68,6 +68,8 @@ const tests = {
         const ACCOUNT_INFORMATION = SUMMARY_TAB.sections.get("ACCOUNT_INFORMATION");
         // $ExpectType StringControl
         ACCOUNT_INFORMATION.controls.get("name");
+        // $ExpectType StringAttribute
+        form.data.entity.attributes.get("name");
     },
     "should infer types for Specific Generic Models.Account Form": (
         context: Xrm.Page.BoundEventContext<Xrm.EarlyBound.Form<Models.Account>>,
