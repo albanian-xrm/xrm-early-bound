@@ -2,14 +2,14 @@
 // Minimum TypeScript Version: 4.2
 
 declare namespace Xrm {
-    type BoundData<T extends EarlyBound.Form<keyof EarlyBound.Entities>> = {
+    type BoundData<T extends EarlyBound.Form<EarlyBound.Entity>> = {
         attributes: Collection.FormAttributesCollection<T>;
     } & Data;
 
     /**
      * @template T Early-Bound entity for the context
      */
-    type BoundFormContext<T extends EarlyBound.Form<keyof EarlyBound.Entities>> = {
+    type BoundFormContext<T extends EarlyBound.Form<EarlyBound.Entity>> = {
         data: BoundData<T>;
         ui: BoundUi<T>;
 
@@ -34,13 +34,13 @@ declare namespace Xrm {
         ): EarlyBound.Types.FormControls<T>[Y];
     } & FormContext;
 
-    type BoundUi<T extends EarlyBound.Form<keyof EarlyBound.Entities>> = {
+    type BoundUi<T extends EarlyBound.Form<EarlyBound.Entity>> = {
         controls: Collection.FormControlsCollection<T>;
         tabs: Collection.TabCollection<T>;
     } & Ui;
 
     namespace Collection {
-        type FormAttributesCollection<T extends EarlyBound.Form<keyof EarlyBound.Entities>> = {
+        type FormAttributesCollection<T extends EarlyBound.Form<EarlyBound.Entity>> = {
             /**
              *
              * @param itemName attribute Name
@@ -48,7 +48,7 @@ declare namespace Xrm {
             get<Y extends keyof EarlyBound.Types.FormAttributes<T>>(itemName: Y): EarlyBound.Types.FormAttributes<T>[Y];
         } & ItemCollection<Attributes.Attribute>;
 
-        type FormControlsCollection<T extends EarlyBound.Form<keyof EarlyBound.Entities>> = {
+        type FormControlsCollection<T extends EarlyBound.Form<EarlyBound.Entity>> = {
             /**
              *
              * @param itemName control Name
@@ -56,7 +56,7 @@ declare namespace Xrm {
             get<Y extends keyof EarlyBound.Types.FormControls<T>>(itemName: Y): EarlyBound.Types.FormControls<T>[Y];
         } & ItemCollection<Controls.Control>;
 
-        type TabCollection<T extends EarlyBound.Form<keyof EarlyBound.Entities>> = {
+        type TabCollection<T extends EarlyBound.Form<EarlyBound.Entity>> = {
             /**
              *
              * @param itemName tab Name
@@ -65,7 +65,7 @@ declare namespace Xrm {
         } & ItemCollection<Controls.Tab>;
 
         type SectionCollection<
-            T extends EarlyBound.Form<keyof EarlyBound.Entities>,
+            T extends EarlyBound.Form<EarlyBound.Entity>,
             Tab extends keyof EarlyBound.Types.TabsOf<T>,
         > = {
             /**
@@ -78,7 +78,7 @@ declare namespace Xrm {
         } & ItemCollection<Controls.Section>;
 
         type SectionControlsCollection<
-            T extends EarlyBound.Form<keyof EarlyBound.Entities>,
+            T extends EarlyBound.Form<EarlyBound.Entity>,
             Tab extends keyof EarlyBound.Types.TabsOf<T>,
             Section extends keyof EarlyBound.Types.TabsOf<T>[Tab],
         > = {
@@ -93,15 +93,12 @@ declare namespace Xrm {
     }
 
     namespace Controls {
-        type BoundTab<
-            T extends EarlyBound.Form<keyof EarlyBound.Entities>,
-            Tab extends keyof EarlyBound.Types.TabsOf<T>,
-        > = {
+        type BoundTab<T extends EarlyBound.Form<EarlyBound.Entity>, Tab extends keyof EarlyBound.Types.TabsOf<T>> = {
             sections: Collection.SectionCollection<T, Tab>;
         } & Tab;
 
         type BoundSection<
-            T extends EarlyBound.Form<keyof EarlyBound.Entities>,
+            T extends EarlyBound.Form<EarlyBound.Entity>,
             Tab extends keyof EarlyBound.Types.TabsOf<T>,
             Section extends keyof EarlyBound.Types.TabsOf<T>[Tab],
         > = {
@@ -113,44 +110,19 @@ declare namespace Xrm {
         /**
          * @template T Early-Bound entity for the {@link Xrm.Events.EventContext}
          */
-        type BoundEventContext<T extends EarlyBound.Form<keyof EarlyBound.Entities>> = {
+        type BoundEventContext<T extends EarlyBound.Form<EarlyBound.Entity>> = {
             getFormContext(): BoundFormContext<T>;
         } & EventContext;
     }
 
     namespace EarlyBound {
-        /**
-         * List of known early bound entities. Use Type Augmentation to declare your entities.
-         *
-         * @example
-         * // Early-Bound Account
-         * declare namespace Models {
-         *     interface Account {
-         *         CreditOnHold: Xrm.Attributes.BooleanAttribute;
-         *         CustomerTypeCode: Xrm.Attributes.OptionSetAttribute;
-         *         ModifiedBy: Xrm.Attributes.LookupAttribute;
-         *         ModifiedOn: Xrm.Attributes.DateAttribute;
-         *         Name: Xrm.Attributes.StringAttribute;
-         *         NumberOfEmployees: Xrm.Attributes.NumberAttribute;
-         *     }
-         * }
-         *
-         * declare namespace Xrm.EarlyBound {
-         *     interface Entities {
-         *         Account: Models.Account;
-         *     }
-         * }
-         */
-        interface Entities {}
+        interface Entity {}
 
-        /**
-         * List of known Early-Bound Forms. Use Type Augmentation to declare your forms.
-         */
-        interface Forms {}
+        interface Form<T extends Entity> {
+            "#Entity": T;
+        }
 
-        interface Form<T extends keyof Entities> {}
-
-        type ODataEntity<T extends Entities[keyof Entities]> = {
+        type ODataEntity<T extends Entity> = {
             [P in keyof Types.LowercaseKeys<Pick<T, Types.AllowedNames<T, Attributes.StringAttribute>>>]?: string;
         } & {
             [P in keyof Types.LowercaseKeys<Pick<T, Types.AllowedNames<T, Attributes.LookupAttribute>>> as `_${P &
@@ -186,17 +158,6 @@ declare namespace Xrm {
             [P in keyof Types.LowercaseKeys<Pick<T, Types.AllowedNames<T, Attributes.DateAttribute>>>]?: string;
         };
 
-        type GetFormType<T extends Form<keyof Entities>> = T extends Form<infer TResult> ? TResult : keyof Entities;
-
-        type SpecificFormAttributes<T extends Form<keyof Entities>> = {
-            [P in keyof Types.OfType<T, string> as `${Types.OfType<T, string>[P] & string}`]: Types.OfType<
-                T,
-                string
-            >[P] extends keyof Entities[GetFormType<T>]
-                ? Entities[GetFormType<T>][Types.OfType<T, string>[P]]
-                : unknown;
-        };
-
         namespace Types {
             type AllowedNames<Base, Condition> = FilterFlags<Base, Condition>[keyof Base];
 
@@ -206,32 +167,49 @@ declare namespace Xrm {
 
             type Flatten<T> = UnionToIntersection<T[keyof T]>;
 
-            type FormAttributes<T extends Form<keyof Entities>> = LowercaseKeys<
-                keyof T extends never
-                    ? { [P in keyof Entities[GetFormType<T>]]: Entities[GetFormType<T>][P] }
+            type FormAttributes<T extends Form<Entity>> = LowercaseKeys<
+                keyof Omit<T, "#Entity"> extends never
+                    ? {
+                          [P in keyof OfType<FormEntity<T>, Attributes.Attribute>]: OfType<
+                              FormEntity<T>,
+                              Attributes.Attribute
+                          >[P];
+                      }
                     : {
-                          [P in keyof OfType<T, string> as `${OfType<T, string>[P] &
-                              string}`]: OfType<T, string>[P] extends keyof Entities[GetFormType<T>] ? Entities[GetFormType<T>][OfType<T, string>[P]] : never;
+                          [P in keyof OfType<T, string> as `${OfType<T, string>[P] & string}`]: P extends keyof Omit<
+                              T,
+                              "#Entity"
+                          >
+                              ? T[P] extends keyof Omit<FormEntity<T>, "#LogicalName">
+                                  ? FormEntity<T>[T[P] & keyof Omit<FormEntity<T>, "#LogicalName">]
+                                  : never
+                              : never;
                       }
             >;
 
-            type FormControls<T extends Form<keyof Entities>> = keyof T extends never
+            type FormControls<T extends Form<Entity>> = keyof Omit<T, "#Entity"> extends never
                 ? {
-                      [P in keyof Entities[GetFormType<T>] as Lowercase<P & string>]: ToControl<
-                          Entities[GetFormType<T>][P]
-                      >;
+                      [P in keyof FormEntity<T> as Lowercase<P & string>]: ToControl<FormEntity<T>[P]>;
                   }
                 : {
-                      [P in keyof OfType<T, string> as `${P & string}`]: T[P &
-                          keyof T] extends keyof Entities[GetFormType<T>]
-                          ? ToControl<Entities[GetFormType<T>][T[P & keyof T]]>
+                      [P in keyof OfType<T, string> as `${P & string}`]: P extends keyof T
+                          ? T[P] extends keyof OfType<FormEntity<T>, Attributes.Attribute>
+                              ? ToControl<
+                                    OfType<FormEntity<T>, Attributes.Attribute>[T[P] &
+                                        keyof OfType<FormEntity<T>, Attributes.Attribute>]
+                                >
+                              : never
                           : never;
                   } & {
                       [P in keyof OfType<T, Controls.Control> as `${P & string}`]: T[P &
                           keyof T] extends Controls.Control
-                          ? T[P & keyof T]
+                          ? P extends keyof T
+                              ? T[P]
+                              : never
                           : never;
                   };
+
+            type FormEntity<T extends Form<Entity>> = Entity extends T["#Entity"] ? never : T["#Entity"];
 
             type LowercaseKeys<Base> = {
                 [Key in keyof Base as Lowercase<Key & string>]: Base[Key];
@@ -244,20 +222,20 @@ declare namespace Xrm {
             type PickAndFlatten<T, K extends keyof T> = UnionToIntersection<T[K]>;
 
             type SectionControls<
-                T extends Form<keyof Entities>,
+                T extends Form<Entity>,
                 Tab extends keyof TabsOf<T>,
                 Section extends keyof TabsOf<T>[Tab],
             > = {
                 [P in TabsOf<T>[Tab][Section] as `${P & string}`]: P extends keyof T
                     ? T[P] extends string
-                        ? ToControl<Entities[GetFormType<T>][T[P] & keyof Entities[GetFormType<T>]]>
+                        ? ToControl<FormEntity<T>[T[P] & keyof FormEntity<T>]>
                         : T[P] extends Controls.Control
                         ? T[P]
                         : never
                     : never;
             };
 
-            type TabsOf<T extends Form<keyof Entities>> = ".Tabs" extends keyof T ? T[".Tabs"] : {};
+            type TabsOf<T extends Form<Entity>> = ".Tabs" extends keyof T ? T[".Tabs"] : {};
 
             type ToControl<T> = T extends Attributes.StringAttribute
                 ? Controls.StringControl

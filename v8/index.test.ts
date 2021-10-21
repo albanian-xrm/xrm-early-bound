@@ -1,8 +1,46 @@
 const tests = {
+    "should infer Account entity for generic form": (
+        formEntity: Xrm.EarlyBound.Types.FormEntity<Xrm.EarlyBound.Form<Models.Account>>,
+    ) => {
+        // $ExpectType Account
+        formEntity;
+    },
+    "should infer Contact entity for generic form": (
+        formEntity: Xrm.EarlyBound.Types.FormEntity<Xrm.EarlyBound.Form<Models.Contact>>,
+    ) => {
+        // $ExpectType Contact
+        formEntity;
+    },
+    "should infer Account entity for specific form": (
+        formEntity: Xrm.EarlyBound.Types.FormEntity<Models.Account.Forms.Account>,
+    ) => {
+        // $ExpectType Account
+        formEntity;
+    },
+    "should not allow form of generic entity": (
+        formEntity: Xrm.EarlyBound.Types.FormEntity<Xrm.EarlyBound.Form<Xrm.EarlyBound.Entity>>,
+    ) => {
+        // $ExpectType never
+        formEntity;
+    },
+    "should infer form controls for specific form": (
+        formControls: Xrm.EarlyBound.Types.FormControls<Models.Account.Forms.Account>,
+    ) => {
+        // $ExpectType IframeControl
+        formControls.myWebResource;
+        // $ExpectType StringControl
+        formControls.name;
+    },
+    "should infer form controls for generic form": (
+        formControls: Xrm.EarlyBound.Types.FormControls<Xrm.EarlyBound.Form<Models.Account>>,
+    ) => {
+        // $ExpectType StringControl
+        formControls.name;
+    },
     "should infer types for Specific Form Models.Account.Forms.Account": (
         context: Xrm.Page.BoundEventContext<Models.Account.Forms.Account>,
     ) => {
-        // $ExpectType BoundPage<Account>
+        // $ExpectType BoundFormContext<Account>
         const form = context.getFormContext();
         // $ExpectType DateControl
         const modifiedon = form.getControl("modifiedon");
@@ -16,9 +54,13 @@ const tests = {
         const modifiedByAttribute = form.getAttribute("modifiedby");
         // $ExpectType LookupValue[]
         modifiedByAttribute.getValue();
-
         // $ExpectType LookupControl
         const modifiedby = form.getControl("header_ModifiedBy");
+        // $ExpectType IframeControl
+        const myWebResource = form.getControl("myWebResource");
+
+        // $ExpectType StringControl
+        form.ui.controls.get("name");
 
         // $ExpectType BoundTab<Account, "SUMMARY_TAB">
         const SUMMARY_TAB = form.ui.tabs.get("SUMMARY_TAB");
@@ -28,9 +70,9 @@ const tests = {
         ACCOUNT_INFORMATION.controls.get("name");
     },
     "should infer types for Specific Generic Models.Account Form": (
-        context: Xrm.Page.BoundEventContext<Xrm.EarlyBound.Form<"Account">>,
+        context: Xrm.Page.BoundEventContext<Xrm.EarlyBound.Form<Models.Account>>,
     ) => {
-        // $ExpectType BoundPage<Form<"Account">>
+        // $ExpectType BoundFormContext<Form<Account>>
         const form = context.getFormContext();
         // $ExpectType DateControl
         const modifiedon = form.getControl("modifiedon");
@@ -68,15 +110,30 @@ const tests = {
     },
     "should extract spefic type from Xrm.EarlyBound.Form<keyof Xrm.EarlyBound.Entities>": (
         testFormType: (
-            form: Xrm.EarlyBound.Form<keyof Xrm.EarlyBound.Entities>,
-        ) => Xrm.EarlyBound.GetFormType<Xrm.EarlyBound.Form<keyof Xrm.EarlyBound.Entities>>,
+            form: Xrm.EarlyBound.Form<Models.Account>,
+        ) => Xrm.EarlyBound.Types.FormEntity<Xrm.EarlyBound.Form<Models.Account>>,
         mainForm: Models.Account.Forms.Account,
     ) => {
-        // $ExpectType "Account"
+        // $ExpectType Account
         testFormType(mainForm);
+        // $ExpectType "CreditOnHold"
+        const x: keyof Xrm.EarlyBound.Types.OfType<
+            Xrm.EarlyBound.Types.FormEntity<Xrm.EarlyBound.Form<Models.Account>>,
+            Xrm.Page.Attribute
+        > = "CreditOnHold";
     },
-      "should bind context.data": (context: Xrm.Page.BoundEventContext<Models.Account.Forms.Account>) => {
-        // $ExpectType BoundPage<Account>
+    "should infer tab controls": (
+        tabControls: Xrm.EarlyBound.Types.SectionControls<
+            Models.Account.Forms.Account,
+            "SUMMARY_TAB",
+            "ACCOUNT_INFORMATION"
+        >,
+    ) => {
+        // $ExpectType StringControl
+        tabControls.name;
+    },
+    "should bind context.data": (context: Xrm.Page.BoundEventContext<Models.Account.Forms.Account>) => {
+        // $ExpectType BoundFormContext<Account>
         const form = context.getFormContext();
         // $ExpectType StringAttribute
         form.data.attributes.get("name");
