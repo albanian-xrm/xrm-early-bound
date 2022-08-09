@@ -108,7 +108,7 @@ declare namespace Xrm {
             Section extends keyof EarlyBound.Types.TabsOf<T>[Tab],
         > = {
             controls: Collection.SectionControlsCollection<T, Tab, Section>;
-        } & Section;
+        } & Controls.Section;
     }
 
     namespace Events {
