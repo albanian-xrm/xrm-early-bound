@@ -100,7 +100,7 @@ declare namespace Xrm {
     namespace Controls {
         type BoundTab<T extends EarlyBound.Form<EarlyBound.Entity>, Tab extends keyof EarlyBound.Types.TabsOf<T>> = {
             sections: Collection.SectionCollection<T, Tab>;
-        } & Tab;
+        } & Controls.Tab;
 
         type BoundSection<
             T extends EarlyBound.Form<EarlyBound.Entity>,

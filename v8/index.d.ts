@@ -68,7 +68,7 @@ declare namespace Xrm {
     namespace Controls {
         type BoundTab<T extends EarlyBound.Form<EarlyBound.Entity>, Tab extends keyof EarlyBound.Types.TabsOf<T>> = {
             sections: Collection.SectionCollection<T, Tab>;
-        } & Tab;
+        } & Page.Tab;
 
         type BoundSection<
             T extends EarlyBound.Form<EarlyBound.Entity>,
@@ -248,7 +248,7 @@ declare namespace Xrm {
         type BoundEntity<T extends EarlyBound.Form<EarlyBound.Entity>> = {
             attributes: Collection.FormAttributesCollection<T>;
         } & Entity;
-    
+
         /**
          * @template T Early-Bound entity for the {@link Xrm.Events.EventContext}
          */
