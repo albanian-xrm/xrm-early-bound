@@ -98,17 +98,17 @@ declare namespace Xrm {
     }
 
     namespace Controls {
-        type BoundTab<T extends EarlyBound.Form<EarlyBound.Entity>, Tab extends keyof EarlyBound.Types.TabsOf<T>> = {
-            sections: Collection.SectionCollection<T, Tab>;
-        } & Controls.Tab;
+        type BoundTab<T extends EarlyBound.Form<EarlyBound.Entity>, TTab extends keyof EarlyBound.Types.TabsOf<T>> = {
+            sections: Collection.SectionCollection<T, TTab>;
+        } & Tab;
 
         type BoundSection<
             T extends EarlyBound.Form<EarlyBound.Entity>,
-            Tab extends keyof EarlyBound.Types.TabsOf<T>,
-            Section extends keyof EarlyBound.Types.TabsOf<T>[Tab],
+            TTab extends keyof EarlyBound.Types.TabsOf<T>,
+            TSection extends keyof EarlyBound.Types.TabsOf<T>[TTab],
         > = {
-            controls: Collection.SectionControlsCollection<T, Tab, Section>;
-        } & Controls.Section;
+            controls: Collection.SectionControlsCollection<T, TTab, TSection>;
+        } & Section;
     }
 
     namespace Events {

@@ -4,7 +4,7 @@
 declare namespace Xrm {
     type BoundData<T extends EarlyBound.Form<EarlyBound.Entity>> = {
         attributes: Collection.FormAttributesCollection<T>;
-        entity: Page.BoundEntity<T>
+        entity: Page.BoundEntity<T>;
     } & Data;
 
     type BoundUi<T extends EarlyBound.Form<EarlyBound.Entity>> = {
@@ -34,7 +34,7 @@ declare namespace Xrm {
              *
              * @param itemName tab Name
              */
-            get<Tab extends keyof EarlyBound.Types.TabsOf<T>>(itemName: Tab): Controls.BoundTab<T, Tab>;
+            get<Tab extends keyof EarlyBound.Types.TabsOf<T>>(itemName: Tab): Page.BoundTab<T, Tab>;
         } & ItemCollection<Page.Tab>;
 
         type SectionCollection<
@@ -47,7 +47,7 @@ declare namespace Xrm {
              */
             get<Section extends keyof EarlyBound.Types.TabsOf<T>[Tab]>(
                 itemName: Section,
-            ): Controls.BoundSection<T, Tab, Section>;
+            ): Page.BoundSection<T, Tab, Section>;
         } & ItemCollection<Page.Section>;
 
         type SectionControlsCollection<
@@ -63,20 +63,6 @@ declare namespace Xrm {
                 itemName: Y,
             ): EarlyBound.Types.SectionControls<T, Tab, Section>[Y];
         } & ItemCollection<Page.Control>;
-    }
-
-    namespace Controls {
-        type BoundTab<T extends EarlyBound.Form<EarlyBound.Entity>, Tab extends keyof EarlyBound.Types.TabsOf<T>> = {
-            sections: Collection.SectionCollection<T, Tab>;
-        } & Page.Tab;
-
-        type BoundSection<
-            T extends EarlyBound.Form<EarlyBound.Entity>,
-            Tab extends keyof EarlyBound.Types.TabsOf<T>,
-            Section extends keyof EarlyBound.Types.TabsOf<T>[Tab],
-        > = {
-            controls: Collection.SectionControlsCollection<T, Tab, Section>;
-        } & Page.Section;
     }
 
     namespace EarlyBound {
@@ -245,6 +231,18 @@ declare namespace Xrm {
     } & Page;
 
     namespace Page {
+        type BoundTab<T extends EarlyBound.Form<EarlyBound.Entity>, TTab extends keyof EarlyBound.Types.TabsOf<T>> = {
+            sections: Collection.SectionCollection<T, TTab>;
+        } & Tab;
+
+        type BoundSection<
+            T extends EarlyBound.Form<EarlyBound.Entity>,
+            TTab extends keyof EarlyBound.Types.TabsOf<T>,
+            TSection extends keyof EarlyBound.Types.TabsOf<T>[TTab],
+        > = {
+            controls: Collection.SectionControlsCollection<T, TTab, TSection>;
+        } & Section;
+
         type BoundEntity<T extends EarlyBound.Form<EarlyBound.Entity>> = {
             attributes: Collection.FormAttributesCollection<T>;
         } & Entity;

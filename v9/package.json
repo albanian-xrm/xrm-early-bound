@@ -7,8 +7,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/xrm": "^9",
-    "dtslint": "^4.1.6",
-    "tar": "^6.1.11",
+    "tsd": "^0.24.1",
     "typescript": "^4.4.4"
   },
   "files": [
@@ -23,7 +22,7 @@
     "@types/xrm": "^9"
   },
   "scripts": {
-    "dtslint": "dtslint ."
+    "test": "tsd ."
   },
   "types": "index.d.ts",
   "typeScriptVersion": "4.2"
