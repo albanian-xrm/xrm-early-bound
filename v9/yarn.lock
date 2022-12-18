@@ -77,10 +77,10 @@
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.1.tgz#d3357479a0fdfdd5907fe67e17e0a85c906e1301"
   integrity sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==
 
-"@types/xrm@^9":
-  version "9.0.47"
-  resolved "https://registry.yarnpkg.com/@types/xrm/-/xrm-9.0.47.tgz#9a0f646221aa4fe59ee0b5eb0ef725ef15c25804"
-  integrity sha512-O5t9U87KOZdYiioVOg2Ajm6y5IlnAR4RKVC13gLntoZ9A07pEs+WzB5dBJm3IbParbvHVssJNy3WA+3rn1/ZXw==
+"@types/xrm@^9.0.68":
+  version "9.0.68"
+  resolved "https://registry.yarnpkg.com/@types/xrm/-/xrm-9.0.68.tgz#33babaaa226c8f0c839c6cf0f231e0513592cfb5"
+  integrity sha512-sfSM/drEgt1kXa9zynQOEhR2iVWhtMF8k1z/Br66Z8gjy5FurzZJ6zSZHEaTWeaB4DcXJYrYSpT15P1trboJhA==
 
 ansi-escapes@^4.2.1:
   version "4.3.2"

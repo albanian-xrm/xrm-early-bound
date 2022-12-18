@@ -117,4 +117,14 @@ const tests = {
         expectType<Xrm.BoundFormContext<Models.Account.Forms.main.Account>>(form);
         expectType<Xrm.Attributes.StringAttribute>(form.data.attributes.get("name"));
     },
+    "should infer MultiSelectOptionSetControl": (
+        context: Xrm.Events.BoundEventContext<Models.Account.Forms.main.Account>,
+    ) => {
+        const form = context.getFormContext();
+        const choices = form.getControl("albx_Choices");
+        expectType<Xrm.BoundFormContext<Models.Account.Forms.main.Account>>(form);
+        expectType<Xrm.Controls.MultiSelectOptionSetControl>(choices);
+        expectType<Xrm.Attributes.MultiSelectOptionSetAttribute>(choices.getAttribute());
+        expectType<Xrm.Attributes.MultiSelectOptionSetAttribute>(form.getAttribute("albx_choices"));
+    },
 };

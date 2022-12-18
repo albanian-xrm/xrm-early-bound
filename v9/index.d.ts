@@ -4,7 +4,7 @@
 declare namespace Xrm {
     type BoundData<T extends EarlyBound.Form<EarlyBound.Entity>> = {
         attributes: Collection.FormAttributesCollection<T>;
-        entity: BoundEntity<T>
+        entity: BoundEntity<T>;
     } & Data;
 
     type BoundEntity<T extends EarlyBound.Form<EarlyBound.Entity>> = {
@@ -144,6 +144,7 @@ declare namespace Xrm {
                     T,
                     Types.AllowedNames<
                         T,
+                        | Attributes.MultiSelectOptionSetAttribute
                         | Attributes.OptionSetAttribute
                         | Attributes.BooleanAttribute
                         | Attributes.DateAttribute
@@ -155,6 +156,8 @@ declare namespace Xrm {
             [P in keyof Types.LowercaseKeys<
                 Pick<T, Types.AllowedNames<T, Attributes.OptionSetAttribute | Attributes.NumberAttribute>>
             >]?: number;
+        } & {
+            [P in keyof Types.LowercaseKeys<Types.OfType<T, Attributes.MultiSelectOptionSetAttribute>>]?: number[];
         } & {
             [P in keyof Types.LowercaseKeys<Types.OfType<T, Attributes.BooleanAttribute>>]?: boolean;
         } & {
@@ -244,11 +247,13 @@ declare namespace Xrm {
 
             type ToControl<T> = T extends Attributes.StringAttribute
                 ? Controls.StringControl
+                : T extends Attributes.MultiSelectOptionSetAttribute
+                ? Controls.MultiSelectOptionSetControl
                 : T extends Attributes.BooleanAttribute
                 ? Controls.OptionSetControl
                 : T extends Attributes.OptionSetAttribute
                 ? Controls.OptionSetControl
-                : T extends Attributes.EnumAttribute<number | boolean>
+                : T extends Attributes.EnumAttribute<number[] | number | boolean>
                 ? Controls.OptionSetControl
                 : T extends Attributes.NumberAttribute
                 ? Controls.NumberControl
