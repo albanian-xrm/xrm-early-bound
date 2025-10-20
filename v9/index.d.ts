@@ -113,11 +113,125 @@ declare namespace Xrm {
 
     namespace Events {
         /**
-         * @template T Early-Bound entity for the {@link Xrm.Events.EventContext}
+         * @template T Early-Bound entity for the {@link EventContext}
          */
         type BoundEventContext<T extends EarlyBound.Form<EarlyBound.Entity>> = {
             getFormContext(): BoundFormContext<T>;
         } & EventContext;
+
+        /**
+         * @template T Early-Bound entity for the {@link DataLoadEventContext}
+         */
+        type BoundDataLoadEventContext<T extends EarlyBound.Form<EarlyBound.Entity>> = {
+            getFormContext(): BoundFormContext<T>;
+        } & DataLoadEventContext;
+
+        /**
+         * @template T Early-Bound entity for the {@link LoadEventContext}
+         */
+        type BoundLoadEventContext<T extends EarlyBound.Form<EarlyBound.Entity>> = {
+            getFormContext(): BoundFormContext<T>;
+        } & LoadEventContext;
+
+        /**
+         * @template T Early-Bound entity for the {@link LoadEventContextAsync}
+         */
+        type BoundLoadEventContextAsync<T extends EarlyBound.Form<EarlyBound.Entity>> = {
+            getFormContext(): BoundFormContext<T>;
+        } & LoadEventContextAsync;
+
+        /**
+         * @template T Early-Bound entity for the {@link SaveEventContext}
+         */
+        type BoundSaveEventContext<T extends EarlyBound.Form<EarlyBound.Entity>> = BoundEventContext<T> & SaveEventContext;
+
+        /**
+         * @template T Early-Bound entity for the {@link SaveEventContextAsync}
+         */
+        type BoundSaveEventContextAsync<T extends EarlyBound.Form<EarlyBound.Entity>> = BoundEventContext<T> & SaveEventContextAsync;
+
+        /**
+         * @template T Early-Bound entity for the {@link PostSaveEventContext}
+         */
+        type BoundPostSaveEventContext<T extends EarlyBound.Form<EarlyBound.Entity>> = BoundEventContext<T> & PostSaveEventContext;
+
+        /**
+         * @template T Early-Bound entity for the {@link StageChangeEventContext}
+         */
+        type BoundStageChangeEventContext<T extends EarlyBound.Form<EarlyBound.Entity>> = BoundEventContext<T> & StageChangeEventContext;
+  
+        /**
+         * @template T Early-Bound entity for the {@link StageSelectedEventContext}
+         */
+        type BoundStageSelectedEventContext<T extends EarlyBound.Form<EarlyBound.Entity>> = BoundEventContext<T> & StageSelectedEventContext;
+
+        /**
+         * @template T Early-Bound entity for the {@link ProcessStatusChangedEventContext}
+         */
+        type BoundProcessStatusChangedEventContext<T extends EarlyBound.Form<EarlyBound.Entity>> = BoundEventContext<T> & ProcessStatusChangedEventContext;
+
+        /**
+         * @template T Early-Bound entity for the {@link LookupTagClickEventContext}
+         */
+        type BoundLookupTagClickEventContext<T extends EarlyBound.Form<EarlyBound.Entity>> = BoundEventContext<T> & LookupTagClickEventContext;
+
+        /**
+         * Type for a context-sensitive handler.
+         * @param context The context.
+         * @template T Early-Bound entity for the {@link Xrm.Events.EventContext}
+         */
+        type BoundContextSensitiveHandler<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundEventContext<T>) => void;
+    
+        type BoundLoadEventHandler<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundLoadEventContext<T>) => void;
+        type BoundLoadEventHandlerAsync<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundLoadEventContextAsync<T>) => void;
+
+        type BoundDataLoadEventHandler<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundDataLoadEventContext<T>) => void;
+
+        type BoundSaveEventHandler<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundSaveEventContext<T>) => void;
+        type BoundSaveEventHandlerAsync<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundSaveEventContextAsync<T>) => PromiseLike<void>;
+
+        type BoundPostSaveEventHandler<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundPostSaveEventContext<T>) => void;
+
+        type BoundProcessStatusChangeHandler<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundProcessStatusChangedEventContext<T>) => void;
+        type BoundStageChangeEventHandler<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundStageChangeEventContext<T>) => void;
+        type BoundStageSelectedEventHandler<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundStageSelectedEventContext<T>) => void;
+
+        type BoundLookupTagClickHandler<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundLookupTagClickEventContext<T>) => void;
+    
+        namespace Attribute {
+            type BoundChangeEventContext<T extends EarlyBound.Form<EarlyBound.Entity>> = BoundEventContext<T> & ChangeEventContext;
+            type BoundLoadEventHandler<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundChangeEventContext<T>) => void;
+        }
+
+        namespace GridControl {
+            type BoundLoadEventContext<T extends EarlyBound.Form<EarlyBound.Entity>> = BoundEventContext<T> & LoadEventContext;
+            type BoundLoadEventHandler<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundLoadEventContext<T>) => void;
+        }
+
+        namespace KbSearchControl {
+            type BoundPostSearchEventContext<T extends EarlyBound.Form<EarlyBound.Entity>> = BoundEventContext<T> & PostSearchEventContext;
+            type BoundPostSearchEventHandler<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundPostSearchEventContext<T>) => void;
+
+            type BoundResultOpenedEventContext<T extends EarlyBound.Form<EarlyBound.Entity>> = BoundEventContext<T> & ResultOpenedEventContext;
+            type BoundResultOpenedEventHandler<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundResultOpenedEventContext<T>) => void;
+
+            type BoundSelectionEventContext<T extends EarlyBound.Form<EarlyBound.Entity>> = BoundEventContext<T> & SelectionEventContext;
+            type BoundSelectionEventHandler<T extends EarlyBound.Form<EarlyBound.Entity>> = (context: BoundSelectionEventContext<T>) => void;
+        }
+    }
+
+    interface Data {
+        /**
+         * Adds a function to be called when form data is loaded.
+         * @param handler The function to be executed when the form data loads. The function will be added to the bottom of the event handler pipeline.
+         */
+        addOnLoad<T extends EarlyBound.Form<EarlyBound.Entity>>(handler: Events.BoundDataLoadEventHandler<T>): void;
+    
+        /**
+         * Removes a function to be called when form data is loaded.
+         * @param handler The function to be removed when the form data loads.
+         */
+        removeOnLoad<T extends EarlyBound.Form<EarlyBound.Entity>>(handler: Events.BoundContextSensitiveHandler<T>): void;
     }
 
     namespace EarlyBound {
